@@ -1,0 +1,51 @@
+{
+  "performance": {
+    "target_accuracy": 0.995,
+    "target_response_time_ms": 500,
+    "enable_gpu": true,
+    "enable_caching": true,
+    "cache_sizes": {
+      "card_detection": 100,
+      "ocr_results": 1000,
+      "hand_evaluation": 10000
+    }
+  },
+  "computer_vision": {
+    "card_detection": {
+      "confidence_threshold": 0.7,
+      "iou_threshold": 0.5,
+      "use_tensorrt": true,
+      "batch_size": 4
+    },
+    "ocr": {
+      "min_confidence": 0.6,
+      "use_gpu": true,
+      "preprocessing": {
+        "enhance_contrast": true,
+        "denoise": true,
+        "upscale_factor": 2.0
+      }
+    }
+  },
+  "ai_engine": {
+    "monte_carlo": {
+      "simulations": 10000,
+      "use_vectorization": true,
+      "parallel_threads": 4
+    },
+    "hand_evaluation": {
+      "use_lookup_tables": true,
+      "cache_size": 10000
+    }
+  },
+  "screen_capture": {
+    "capture_interval": 0.5,
+    "max_queue_size": 10,
+    "use_gpu_transfer": true
+  },
+  "optimization": {
+    "enable_profiling": false,
+    "log_performance_warnings": true,
+    "performance_log_interval": 100
+  }
+}
