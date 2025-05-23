@@ -17,18 +17,18 @@ if REQUIREMENTS_PATH.exists():
         requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
 setup(
-    name="poker-analysis-system",
+    name="poker-helper",
     version="1.0.0",
     author="Development Team",
-    author_email="dev@poker-analysis.com",
+    author_email="dev@poker-helper.com",
     description="Real-time poker analysis and decision support system for research purposes",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/username/poker-analysis-system",
+    url="https://github.com/clduab11/poker-helper",
     project_urls={
-        "Bug Tracker": "https://github.com/username/poker-analysis-system/issues",
-        "Documentation": "https://github.com/username/poker-analysis-system/docs",
-        "Source Code": "https://github.com/username/poker-analysis-system",
+        "Bug Tracker": "https://github.com/clduab11/poker-helper/issues",
+        "Documentation": "https://github.com/clduab11/poker-helper/docs",
+        "Source Code": "https://github.com/clduab11/poker-helper",
     },
     packages=find_packages(),
     classifiers=[
@@ -66,7 +66,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "poker-analysis=main:main",
+            "poker-helper=main:main",
         ],
     },
     include_package_data=True,
