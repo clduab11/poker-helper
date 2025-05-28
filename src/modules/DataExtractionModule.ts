@@ -36,7 +36,7 @@ export class DataExtractionModule {
    * Initializes the Tesseract.js worker and loads language data.
    */
   async initWorker(): Promise<void> {
-    if (this.worker) return;
+    if (this.worker) {return;}
     // Await the worker creation (createWorker returns Promise<Worker>)
     this.worker = await createWorker();
     await this.worker.load();

@@ -69,7 +69,7 @@ export class ScreenCaptureModule {
       const match = sources.find((src) =>
         src.name.includes(this.config.targetWindowTitle!)
       );
-      if (match) return match;
+      if (match) {return match;}
     }
 
     // Otherwise, prompt user to select (for now, pick the first screen)
@@ -115,7 +115,7 @@ export class ScreenCaptureModule {
     try {
       source = await this.selectTargetWindow();
     } catch (err) {
-      if (err instanceof PermissionDeniedError) throw err;
+      if (err instanceof PermissionDeniedError) {throw err;}
       throw new CaptureFailureError('Failed to select capture source');
     }
 

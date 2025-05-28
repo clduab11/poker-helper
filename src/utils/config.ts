@@ -238,7 +238,7 @@ export class ConfigurationManager {
    * Parse string to number with fallback
    */
   private parseNumber(value: string | undefined, defaultValue: number): number {
-    if (!value) return defaultValue;
+    if (!value) {return defaultValue;}
     const parsed = Number(value);
     return isNaN(parsed) ? defaultValue : parsed;
   }
@@ -247,7 +247,7 @@ export class ConfigurationManager {
    * Parse string to boolean with fallback
    */
   private parseBoolean(value: string | undefined, defaultValue: boolean): boolean {
-    if (!value) return defaultValue;
+    if (!value) {return defaultValue;}
     return value.toLowerCase() === 'true' || value === '1';
   }
 

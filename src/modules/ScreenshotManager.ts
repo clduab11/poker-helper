@@ -199,7 +199,7 @@ export class ScreenshotManager extends EventEmitter {
         let currentSize = totalSizeMB;
 
         for (const screenshot of sorted) {
-          if (currentSize <= targetSize) break;
+          if (currentSize <= targetSize) {break;}
 
           try {
             const stats = await fs.stat(screenshot.filepath);
@@ -257,7 +257,7 @@ export class ScreenshotManager extends EventEmitter {
 
   public async getScreenshotData(id: string): Promise<Buffer | null> {
     const screenshot = this.screenshots.get(id);
-    if (!screenshot) return null;
+    if (!screenshot) {return null;}
 
     try {
       return await fs.readFile(screenshot.filepath);
@@ -272,13 +272,13 @@ export class ScreenshotManager extends EventEmitter {
   }
 
   public getOldestTimestamp(): number | null {
-    if (this.screenshots.size === 0) return null;
+    if (this.screenshots.size === 0) {return null;}
     
     return Math.min(...Array.from(this.screenshots.values()).map(s => s.timestamp));
   }
 
   public getNewestTimestamp(): number | null {
-    if (this.screenshots.size === 0) return null;
+    if (this.screenshots.size === 0) {return null;}
     
     return Math.max(...Array.from(this.screenshots.values()).map(s => s.timestamp));
   }

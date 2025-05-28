@@ -313,7 +313,7 @@ export class EnhancedMainOrchestrator {
 
     try {
       const imageData = await this.screenshotManager?.getScreenshotData(screenshotData.id);
-      if (!imageData) return;
+      if (!imageData) {return;}
 
       const gameState = await (gameStateManager as any).getState();
       const result = await this.multiAgentWorkflow?.processPokerScreenshot(imageData, gameState);

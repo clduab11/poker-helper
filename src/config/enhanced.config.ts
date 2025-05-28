@@ -1,5 +1,4 @@
 import { EnhancedOrchestratorConfig } from '../modules/EnhancedMainOrchestrator';
-import { LogLevel } from '../utils/logger';
 
 export const enhancedConfig: EnhancedOrchestratorConfig = {
   maxPipelineLatencyMs: 200,
