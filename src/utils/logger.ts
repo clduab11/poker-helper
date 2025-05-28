@@ -61,7 +61,7 @@ export class Logger {
     this.config = { ...Logger.globalConfig, ...config };
     
     // Set log level from environment variable if available
-    const envLevel = process.env['LOG_LEVEL']?.toUpperCase();
+    const envLevel = process.env.LOG_LEVEL?.toUpperCase();
     if (envLevel && LogLevel[envLevel as keyof typeof LogLevel] !== undefined) {
       this.config.level = LogLevel[envLevel as keyof typeof LogLevel];
     }

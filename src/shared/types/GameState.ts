@@ -79,4 +79,10 @@ export interface GameState {
   extractionErrors?: ExtractionError[] | undefined;
   timestamp: number; // ms since epoch
   multiWindowDetected?: boolean;
+  
+  // Additional properties used by workflow agents
+  playerPosition?: number;
+  playerChips?: number;
+  playerHand?: Card[];
+  startingChips?: number;
 }

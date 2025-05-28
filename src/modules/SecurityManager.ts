@@ -8,6 +8,12 @@ import {
 import * as AntiDetection from './utils/AntiDetection';
 import * as ProcessIsolation from './utils/ProcessIsolation';
 
+interface SecurityManagerConfig {
+  antiDetectionEnabled: boolean;
+  processIsolationEnabled: boolean;
+  riskProfile: 'low' | 'medium' | 'high';
+}
+
 /**
  * SecurityManager orchestrates anti-detection, process isolation, system monitoring,
  * dynamic risk assessment, and security profile management.
@@ -18,10 +24,37 @@ export class SecurityManager {
   private eventLog: SecurityEvent[] = [];
   private lastFootprint: SystemFootprint | null = null;
 
-  constructor(profiles: SecurityProfile[], defaultProfileName: string) {
+  constructor(config: SecurityManagerConfig, logger?: any) {
+    // Create default profiles based on config
+    const profiles: SecurityProfile[] = [
+      {
+        name: 'low',
+        riskLevel: RiskLevel.Low,
+        enabledStrategies: [DetectionAvoidanceStrategy.RandomizedDelays],
+      },
+      {
+        name: 'medium',
+        riskLevel: RiskLevel.Medium,
+        enabledStrategies: [
+          DetectionAvoidanceStrategy.RandomizedDelays,
+          DetectionAvoidanceStrategy.CPUThrottling,
+        ],
+      },
+      {
+        name: 'high',
+        riskLevel: RiskLevel.High,
+        enabledStrategies: [
+          DetectionAvoidanceStrategy.RandomizedDelays,
+          DetectionAvoidanceStrategy.CPUThrottling,
+          DetectionAvoidanceStrategy.ProcessIsolation,
+          DetectionAvoidanceStrategy.MemoryFootprintReduction,
+        ],
+      },
+    ];
+
     this.profiles = {};
     profiles.forEach((p) => (this.profiles[p.name] = p));
-    this.currentProfile = this.profiles[defaultProfileName] || profiles[0];
+    this.currentProfile = this.profiles[config.riskProfile] || profiles[0];
     this.logEvent('init', `Initialized with profile: ${this.currentProfile.name}`, this.currentProfile.riskLevel);
   }
 
