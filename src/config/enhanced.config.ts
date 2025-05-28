@@ -1,4 +1,5 @@
 import { EnhancedOrchestratorConfig } from '../modules/EnhancedMainOrchestrator';
+import { env } from './environment';
 
 export const enhancedConfig: EnhancedOrchestratorConfig = {
   maxPipelineLatencyMs: 200,
@@ -49,7 +50,7 @@ export const enhancedConfig: EnhancedOrchestratorConfig = {
   },
   visionModel: {
     provider: 'openai',
-    apiKey: process.env.OPENAI_API_KEY || '',
+    apiKey: env.openaiApiKey,
     model: 'gpt-4-vision-preview',
     maxTokens: 1000,
     temperature: 0.3,
@@ -96,7 +97,7 @@ export const enhancedConfig: EnhancedOrchestratorConfig = {
 export const anthropicConfig: Partial<EnhancedOrchestratorConfig> = {
   visionModel: {
     provider: 'anthropic',
-    apiKey: process.env.ANTHROPIC_API_KEY || '',
+    apiKey: env.anthropicApiKey,
     model: 'claude-3-opus-20240229',
     maxTokens: 1000,
     temperature: 0.3,

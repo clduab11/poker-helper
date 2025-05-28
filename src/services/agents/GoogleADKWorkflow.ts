@@ -2,7 +2,6 @@ import { Logger } from '../../utils/logger';
 import { VisionModelService, VisionAnalysisResponse } from '../vision/VisionModelService';
 import { EventEmitter } from 'events';
 import { GameState } from '../../shared/types/GameState';
-import { Decision } from '../../shared/types/Decision';
 
 export interface AgentConfig {
   id: string;

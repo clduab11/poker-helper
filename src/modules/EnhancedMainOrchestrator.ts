@@ -11,7 +11,7 @@ import { VisionModelService, VisionModelConfig } from '../services/vision/Vision
 import { GoogleADKWorkflow, WorkflowConfig } from '../services/agents/GoogleADKWorkflow';
 import { Logger } from '../utils/logger';
 import { GameState } from '../shared/types/GameState';
-import { Decision } from '../shared/types/Decision';
+import { Recommendation } from '../shared/types/Decision';
 
 export interface EnhancedOrchestratorConfig extends OrchestratorConfig {
   screenshotManager: ScreenshotManagerConfig;
@@ -243,7 +243,7 @@ export class EnhancedMainOrchestrator {
             const screenshotData = await this.screenshotManager?.getScreenshotData(latestScreenshot.id);
             
             if (screenshotData) {
-              let decision: Decision;
+              let decision: Recommendation;
               let gameState: GameState;
 
               if (this.config.useMultiAgentMode && this.multiAgentWorkflow) {
@@ -257,12 +257,8 @@ export class EnhancedMainOrchestrator {
                 decision = {
                   action: workflowResult.recommendation,
                   confidence: workflowResult.confidence,
-                  reasoning: workflowResult.reasoning,
+                  rationale: workflowResult.reasoning,
                   timestamp: Date.now(),
-                  alternatives: workflowResult.agentContributions.map(a => ({
-                    action: a.content.action || 'unknown',
-                    probability: a.confidence || 0,
-                  })),
                 };
               } else {
                 // Traditional pipeline with vision enhancement
