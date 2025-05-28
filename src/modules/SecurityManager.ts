@@ -102,7 +102,7 @@ export class SecurityManager {
    * Escalates or de-escalates risk level and profile as needed.
    */
   adjustBehaviorBasedOnRisk(): void {
-    if (!this.lastFootprint) return;
+    if (!this.lastFootprint) {return;}
     let newRisk: RiskLevel = this.currentProfile.riskLevel;
     if (this.lastFootprint.cpuUsagePercent > 90 || this.lastFootprint.memoryUsageMB > 800) {
       newRisk = RiskLevel.Critical;

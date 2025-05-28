@@ -1,0 +1,59 @@
+# TruffleHog configuration for secret detection
+# https://trufflesecurity.com/trufflehog
+
+# Global configuration
+detectors:
+  - aws
+  - github
+  - gitlab
+  - slack
+  - discord
+  - postgresql
+  - mysql
+  - mongodb
+  - redis
+  - jwt
+  - stripe
+  - paypal
+  - mailgun
+  - sendgrid
+  - twilio
+  - openai
+  - anthropic
+  - google-api-key
+  - dockerhub
+  - npm
+  - pypi
+
+# Only scan verified secrets to reduce false positives
+only-verified: true
+
+# Exclude patterns to reduce noise
+exclude-paths:
+  - node_modules/
+  - dist/
+  - build/
+  - "*.log"
+  - "*.tmp"
+  - ".git/"
+  - "*.lock"
+  - "package-lock.json"
+  - "yarn.lock"
+
+# Custom regex patterns for additional security
+include-detectors:
+  - name: "API Key Pattern"
+    regex: '(?i)(?:api[_-]?key|apikey)["\s]*[:=]["\s]*([a-z0-9]{20,})'
+  - name: "Secret Pattern"
+    regex: '(?i)(?:secret|token|password)["\s]*[:=]["\s]*([a-z0-9]{8,})'
+  - name: "Database URL Pattern"
+    regex: '(?i)(?:database[_-]?url|db[_-]?url)["\s]*[:=]["\s]*([a-z0-9+:/]+)'
+
+# Exclude test files and mock data
+exclude-globs:
+  - "**/*test*"
+  - "**/*spec*"
+  - "**/*mock*"
+  - "**/fixtures/**"
+  - "**/testdata/**"
+  - "**/.env.example"

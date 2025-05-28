@@ -126,7 +126,7 @@ export class DecisionEngine {
           throw new Error('Unsupported LLM provider');
         }
         const rec = PromptEngineering.parseResponse(response);
-        if (rec) return rec;
+        if (rec) {return rec;}
         // If response is malformed, break
         break;
       } catch (err: any) {
@@ -187,7 +187,7 @@ export class DecisionEngine {
         timeout = setTimeout(() => reject('timeout'), ms);
       }),
     ]).finally(() => {
-      if (timeout) clearTimeout(timeout);
+      if (timeout) {clearTimeout(timeout);}
     });
   }
 }

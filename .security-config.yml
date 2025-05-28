@@ -1,0 +1,82 @@
+# Security scanning configuration for poker-helper project
+# This file defines security rules, patterns, and exclusions
+
+# Secret detection patterns
+secrets:
+  patterns:
+    - name: "API Keys"
+      regex: '(?i)(?:api[_-]?key|apikey)["\s]*[:=]["\s]*([a-z0-9]{20,})'
+      severity: "high"
+    - name: "Authentication Tokens"
+      regex: '(?i)(?:token|auth[_-]?token)["\s]*[:=]["\s]*([a-z0-9]{16,})'
+      severity: "high"
+    - name: "Database Passwords"
+      regex: '(?i)(?:db[_-]?pass|database[_-]?password)["\s]*[:=]["\s]*([^\s"\'']{8,})'
+      severity: "critical"
+    - name: "Private Keys"
+      regex: '-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----'
+      severity: "critical"
+    - name: "JWT Tokens"
+      regex: 'eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*'
+      severity: "medium"
+
+  # Files to exclude from secret scanning
+  exclude_files:
+    - "package-lock.json"
+    - "yarn.lock"
+    - "*.log"
+    - ".env.example"
+    - "**/*test*"
+    - "**/*spec*"
+    - "**/fixtures/**"
+    - "**/testdata/**"
+
+# Code security patterns
+security_rules:
+  # SQL Injection prevention
+  sql_injection:
+    patterns:
+      - 'eval\s*\('
+      - 'new\s+Function\s*\('
+      - 'innerHTML\s*='
+      - 'document\.write\s*\('
+    severity: "high"
+  
+  # Cross-site scripting prevention
+  xss:
+    patterns:
+      - 'document\.cookie'
+      - 'window\.location'
+      - 'location\.href'
+    severity: "medium"
+  
+  # Hardcoded credentials
+  credentials:
+    patterns:
+      - '(?i)password\s*[:=]\s*["\'][^"\']{3,}["\']'
+      - '(?i)secret\s*[:=]\s*["\'][^"\']{3,}["\']'
+    severity: "high"
+
+# Vulnerability thresholds
+thresholds:
+  critical: 0  # Block on any critical vulnerabilities
+  high: 0      # Block on any high vulnerabilities
+  medium: 5    # Allow up to 5 medium vulnerabilities
+  low: 10      # Allow up to 10 low vulnerabilities
+
+# Notification settings
+notifications:
+  slack:
+    enabled: false
+    webhook_url: ""
+  email:
+    enabled: false
+    recipients: []
+
+# Reporting settings
+reporting:
+  formats:
+    - json
+    - sarif
+  retention_days: 90
+  include_details: true
