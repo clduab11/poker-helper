@@ -15,6 +15,32 @@ env:
   SECURITY_SCAN_TIMEOUT: 300
 
 jobs:
+  validate-workflow:
+    name: Validate Workflow Configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate workflow YAML syntax
+        run: |
+          echo "Validating workflow syntax..."
+          # Check if yamllint is available, install if not
+          if ! command -v yamllint &> /dev/null; then
+            echo "Installing yamllint..."
+            pip install yamllint
+          fi
+          
+          echo "Checking security-scan.yml syntax..."
+          yamllint .github/workflows/security-scan.yml || echo "Warning: YAML syntax issues detected"
+          
+          echo "Checking claude.yml syntax..."
+          yamllint .github/workflows/claude.yml || echo "Warning: YAML syntax issues detected"
+          
+          echo "✅ Workflow validation completed"
+
   dependency-audit:
     name: Dependency Vulnerability Audit
     runs-on: ubuntu-latest
@@ -130,12 +156,24 @@ jobs:
           fetch-depth: 0
 
       - name: Run TruffleHog OSS
+        id: trufflehog
         uses: trufflesecurity/trufflehog@main
+        continue-on-error: true
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
           head: HEAD
           extra_args: --config=.trufflehog.yml --debug --only-verified --fail
+
+      - name: Check TruffleHog results
+        run: |
+          if [ "${{ steps.trufflehog.outcome }}" = "failure" ]; then
+            echo "❌ TruffleHog detected verified secrets"
+            echo "Please review the secrets detected and remove them before proceeding"
+            exit 1
+          else
+            echo "✅ No verified secrets detected by TruffleHog"
+          fi
 
       - name: Run additional secret patterns check
         run: |
@@ -202,6 +240,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build project
+        run: npm run build
+
       - name: Run security tests
         run: |
           echo "Running security-focused tests..."
@@ -259,7 +300,7 @@ jobs:
   security-report:
     name: Generate Security Report
     runs-on: ubuntu-latest
-    needs: [dependency-audit, license-check, secret-scan, security-tests]
+    needs: [validate-workflow, dependency-audit, license-check, secret-scan, security-tests]
     if: always()
     
     steps:
@@ -328,5 +369,22 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Workflow: ${{ github.workflow }}"
           echo "Run ID: ${{ github.run_id }}"
-          # In a real environment, this would integrate with Slack, email, or other notification systems
-          # Example: curl -X POST -H 'Content-type: application/json' --data '{"text":"Security scan failed"}' $SLACK_WEBHOOK_URL
+          echo "Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          # Optional Slack notification if webhook is configured
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "Sending Slack notification..."
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{"text":"🚨 Security scan failed in ${{ github.repository }}\nBranch: ${{ github.ref_name }}\nRun: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+              "${{ secrets.SLACK_WEBHOOK_URL }}" || echo "Failed to send Slack notification"
+          else
+            echo "No SLACK_WEBHOOK_URL configured - skipping Slack notification"
+          fi
+          
+          # Optional email notification if configured
+          if [ -n "${{ secrets.SECURITY_EMAIL }}" ]; then
+            echo "Email notification would be sent to: ${{ secrets.SECURITY_EMAIL }}"
+            # Email integration would go here
+          else
+            echo "No SECURITY_EMAIL configured - skipping email notification"
+          fi

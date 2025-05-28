@@ -29,6 +29,18 @@ export interface Recommendation {
 }
 
 /**
+ * Interface for a decision made by the decision engine.
+ * Similar to Recommendation but with reasoning instead of rationale.
+ */
+export interface Decision {
+  action: PokerAction;
+  confidence: number; // 0.0 - 1.0
+  reasoning: string;
+  timestamp: number; // Unix epoch ms
+  alternatives?: Array<{ action: PokerAction; probability: number }>;
+}
+
+/**
  * Configuration for the DecisionEngine.
  */
 export interface DecisionEngineConfig {

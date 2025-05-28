@@ -83,7 +83,7 @@ export const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
           {decision.alternatives && decision.alternatives.length > 0 && (
             <div className="alternatives">
               <h4>Alternative Actions:</h4>
-              {decision.alternatives.map((alt, idx) => (
+              {decision.alternatives.map((alt: any, idx: number) => (
                 <div key={idx} className="alternative">
                   <span>{alt.action}</span>
                   <span className="probability">
@@ -139,8 +139,8 @@ export const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
                 <div className="workflow-metadata">
                   <h5>Workflow Metrics</h5>
                   <ul>
-                    <li>Processing Time: {workflowResult.metadata.processingTime}ms</li>
-                    <li>Agents Used: {workflowResult.metadata.agentCount}</li>
+                    <li>Processing Time: {workflowResult.metadata['processingTime']}ms</li>
+                    <li>Agents Used: {workflowResult.metadata['agentCount']}</li>
                     <li>Consensus: {(workflowResult.confidence * 100).toFixed(0)}%</li>
                   </ul>
                 </div>
@@ -150,7 +150,7 @@ export const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .ai-recommendation-panel {
           background: rgba(20, 20, 20, 0.95);
           border: 1px solid rgba(255, 255, 255, 0.1);

@@ -11,9 +11,10 @@ import { VisionModelService, VisionModelConfig } from '../services/vision/Vision
 import { GoogleADKWorkflow, WorkflowConfig } from '../services/agents/GoogleADKWorkflow';
 import { Logger } from '../utils/logger';
 import { GameState } from '../shared/types/GameState';
-import { Decision } from '../shared/types/Decision';
+import { Decision, PokerAction } from '../shared/types/Decision';
 
 export interface EnhancedOrchestratorConfig extends OrchestratorConfig {
+  pollingIntervalMs: number;
   screenshotManager: ScreenshotManagerConfig;
   visionModel: VisionModelConfig;
   multiAgentWorkflow: WorkflowConfig;
@@ -255,12 +256,12 @@ export class EnhancedMainOrchestrator {
                 );
                 
                 decision = {
-                  action: workflowResult.recommendation,
+                  action: workflowResult.recommendation as PokerAction,
                   confidence: workflowResult.confidence,
                   reasoning: workflowResult.reasoning,
                   timestamp: Date.now(),
                   alternatives: workflowResult.agentContributions.map(a => ({
-                    action: a.content.action || 'unknown',
+                    action: (a.content.action || 'fold') as PokerAction,
                     probability: a.confidence || 0,
                   })),
                 };
@@ -320,7 +321,7 @@ export class EnhancedMainOrchestrator {
 
       if (result) {
         const decision: Decision = {
-          action: result.recommendation,
+          action: result.recommendation as PokerAction,
           confidence: result.confidence,
           reasoning: result.reasoning,
           timestamp: Date.now(),

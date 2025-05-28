@@ -285,7 +285,7 @@ export class VisionModelService {
 
     return {
       analysis,
-      confidence,
+      ...(confidence !== undefined && { confidence }),
       metadata,
     };
   }

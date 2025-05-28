@@ -26,8 +26,8 @@ export class ScreenshotManager extends EventEmitter {
   private config: ScreenshotManagerConfig;
   private captureModule: ScreenCaptureModule;
   private logger: Logger;
-  private captureInterval?: NodeJS.Timeout;
-  private cleanupInterval?: NodeJS.Timeout;
+  private captureInterval: NodeJS.Timeout | null = null;
+  private cleanupInterval: NodeJS.Timeout | null = null;
   private screenshots: Map<string, StoredScreenshot> = new Map();
   private isRunning: boolean = false;
 
@@ -84,12 +84,12 @@ export class ScreenshotManager extends EventEmitter {
     
     if (this.captureInterval) {
       clearInterval(this.captureInterval);
-      this.captureInterval = undefined;
+      this.captureInterval = null;
     }
 
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
+      this.cleanupInterval = null;
     }
 
     this.logger.info('Stopped screenshot capture system');
@@ -117,7 +117,7 @@ export class ScreenshotManager extends EventEmitter {
         filepath,
         metadata: {
           resolution: capture.resolution,
-          windowTitle: capture.windowTitle,
+          ...(capture.windowTitle && { windowTitle: capture.windowTitle }),
         },
       };
 

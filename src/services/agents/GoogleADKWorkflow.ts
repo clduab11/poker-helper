@@ -1,8 +1,7 @@
 import { Logger } from '../../utils/logger';
-import { VisionModelService, VisionAnalysisResponse } from '../vision/VisionModelService';
+import { VisionModelService } from '../vision/VisionModelService';
 import { EventEmitter } from 'events';
 import { GameState } from '../../shared/types/GameState';
-import { Decision } from '../../shared/types/Decision';
 
 export interface AgentConfig {
   id: string;
@@ -127,7 +126,7 @@ Format as structured JSON.`;
       role: agent.role,
       content: this.parseJSON(response.analysis),
       timestamp: Date.now(),
-      confidence: response.confidence,
+      ...(response.confidence !== undefined && { confidence: response.confidence }),
     };
 
     this.messageHistory.push(message);
@@ -161,6 +160,8 @@ Analyze and provide:
 Format as structured analysis with confidence scores for each element.`;
 
     // For now, simulate with a structured response
+    // TODO: Use prompt with LLM API
+    console.debug('Analysis prompt prepared:', prompt.length, 'characters');
     const analysisResult = {
       validatedState: {
         ...gameState,
@@ -212,6 +213,8 @@ Provide strategic recommendations:
 Consider GTO principles while adapting to opponent tendencies.`;
 
     // Simulate strategy calculation
+    // TODO: Use strategyPrompt with LLM API
+    console.debug('Strategy prompt prepared:', strategyPrompt.length, 'characters');
     const strategy = {
       primaryAction: this.determineAction(analysis.content, gameState),
       sizing: this.calculateOptimalSizing(analysis.content, gameState),
@@ -333,8 +336,7 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private analyzePosition(gameState: GameState): string {
-    const positions = ['BTN', 'CO', 'MP', 'EP', 'BB', 'SB'];
-    const playerPosition = gameState.playerPosition || 0;
+    const playerPosition = gameState.heroPosition || 0;
     
     if (playerPosition <= 2) return 'Late Position - Strong';
     if (playerPosition <= 4) return 'Middle Position - Moderate';
@@ -342,8 +344,11 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private analyzeStacks(gameState: GameState): any {
+    const heroPlayer = gameState.players.find(p => p.isHero) || gameState.players[gameState.heroPosition];
+    const playerChips = heroPlayer?.chips || 0;
+    
     const effectiveStack = Math.min(
-      gameState.playerChips || 0,
+      playerChips,
       Math.max(...(gameState.players?.map(p => p.chips) || [0]))
     );
     
@@ -361,7 +366,10 @@ Consider GTO principles while adapting to opponent tendencies.`;
     const potOdds = analysis.potOdds || 0;
     const position = analysis.positionStrength || '';
     
-    if (gameState.playerHand?.length === 2) {
+    const heroPlayer = gameState.players.find(p => p.isHero) || gameState.players[gameState.heroPosition];
+    const playerHand = heroPlayer?.cards || [];
+    
+    if (playerHand.length === 2) {
       // Have cards
       if (potOdds > 0.3) return 'fold';
       if (position.includes('Strong')) return 'raise';
@@ -374,20 +382,24 @@ Consider GTO principles while adapting to opponent tendencies.`;
   private calculateOptimalSizing(analysis: any, gameState: GameState): number {
     const pot = gameState.pot || 0;
     const spr = analysis.stackAnalysis?.spr || 0;
+    const heroPlayer = gameState.players.find(p => p.isHero) || gameState.players[gameState.heroPosition];
+    const playerChips = heroPlayer?.chips || 0;
     
-    if (spr < 3) return Math.min(gameState.playerChips || 0, pot);
+    if (spr < 3) return Math.min(playerChips, pot);
     if (spr < 10) return pot * 0.75;
     return pot * 0.67;
   }
 
   private generateAlternatives(gameState: GameState): string[] {
     const alternatives = [];
+    const heroPlayer = gameState.players.find(p => p.isHero) || gameState.players[gameState.heroPosition];
+    const playerChips = heroPlayer?.chips || 0;
     
     if (gameState.currentBet === 0) {
       alternatives.push('check-raise');
     }
     
-    if (gameState.playerChips && gameState.playerChips > gameState.pot * 3) {
+    if (playerChips > gameState.pot * 3) {
       alternatives.push('overbet');
     }
     
@@ -397,7 +409,11 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private assessRisk(gameState: GameState): string {
-    const stackRisk = (gameState.playerChips || 0) / (gameState.startingChips || 100);
+    const heroPlayer = gameState.players.find(p => p.isHero) || gameState.players[gameState.heroPosition];
+    const playerChips = heroPlayer?.chips || 0;
+    // Assume starting stack is pot size * 100 for risk calculation if not available
+    const estimatedStartingChips = gameState.pot * 100 || 100;
+    const stackRisk = playerChips / estimatedStartingChips;
     
     if (stackRisk < 0.2) return 'critical';
     if (stackRisk < 0.5) return 'high';
@@ -450,8 +466,6 @@ Consider GTO principles while adapting to opponent tendencies.`;
       strategy: synthesis.strategyConfidence,
     };
     
-    const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-    
     // Primary action from strategy agent
     const action = strategy.primaryAction || 'check';
     const sizing = strategy.sizing || 0;
@@ -462,6 +476,7 @@ Consider GTO principles while adapting to opponent tendencies.`;
       `Pot Odds: ${(analysis.potOdds * 100).toFixed(1)}%`,
       `Stack Depth: ${analysis.stackAnalysis?.stackDepth}`,
       `Risk Level: ${strategy.riskLevel}`,
+      `Vision Confidence: ${vision.confidence || 'unknown'}`,
       synthesis.conflicts.length > 0 ? `Conflicts: ${synthesis.conflicts.join(', ')}` : '',
     ].filter(Boolean).join('; ');
     
