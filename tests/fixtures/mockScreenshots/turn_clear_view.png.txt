@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: Turn
+View: Clear
+Scenario: Standard turn situation, turn card visible, all text and elements clearly visible.

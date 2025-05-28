@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: Pre-flop
+View: Clear
+Scenario: Standard pre-flop situation, all text and elements clearly visible.

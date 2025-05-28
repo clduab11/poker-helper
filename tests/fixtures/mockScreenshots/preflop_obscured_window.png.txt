@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: Pre-flop
+View: Partially Obscured
+Scenario: Pre-flop situation where another window or overlay partially covers game elements.

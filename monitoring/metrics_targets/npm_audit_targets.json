@@ -1,0 +1,7 @@
+[
+  {
+    "targets": ["localhost:9091"], "labels": {
+      "__metrics_path__": "/metrics/npm_audit.prom"
+    }
+  }
+]

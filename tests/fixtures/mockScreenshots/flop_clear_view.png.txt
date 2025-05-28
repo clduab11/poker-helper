@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: Flop
+View: Clear
+Scenario: Standard flop situation, community cards visible, all text and elements clearly visible.

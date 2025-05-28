@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: Flop
+View: Low Resolution
+Scenario: Flop situation with low resolution, making text and elements potentially blurry or hard to read.

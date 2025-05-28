@@ -1,0 +1,8 @@
+[
+  {
+    "targets": ["localhost:9094"], 
+    "labels": {
+      "__metrics_path__": "/metrics/pre_commit_hooks.prom"
+    }
+  }
+]

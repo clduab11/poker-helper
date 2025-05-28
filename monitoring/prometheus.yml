@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'npm_audit'
+    static_configs:
+      - targets: ['localhost:9091'] # Assuming a simple node_exporter or custom exporter serving the .prom file
+    file_sd_configs:
+      - files:
+          - 'metrics_targets/npm_audit_targets.json'
+        refresh_interval: 5m
+
+  - job_name: 'github_actions'
+    static_configs:
+      - targets: ['localhost:9092'] # Adjust port as needed
+    file_sd_configs:
+      - files:
+          - 'metrics_targets/github_actions_targets.json'
+        refresh_interval: 5m
+
+  - job_name: 'jest_tests'
+    static_configs:
+      - targets: ['localhost:9093'] # Adjust port as needed
+    file_sd_configs:
+      - files:
+          - 'metrics_targets/jest_tests_targets.json'
+        refresh_interval: 5m
+
+  - job_name: 'pre_commit_hooks'
+    static_configs:
+      - targets: ['localhost:9094'] # Adjust port as needed
+    file_sd_configs:
+      - files:
+          - 'metrics_targets/pre_commit_hooks_targets.json'
+        refresh_interval: 5m
+
+  # Add a job for node_exporter if you plan to monitor the host system itself
+  # - job_name: 'node_exporter'
+  #   static_configs:
+  #     - targets: ['localhost:9100']
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093 # Default Alertmanager port

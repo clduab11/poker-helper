@@ -1,0 +1,100 @@
+{
+  "name": "coinpoker-intelligence-assistant",
+  "version": "1.0.0",
+  "description": "Real-time poker analysis tool for CoinPoker with LLM-powered recommendations",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run build:watch\" \"npm run electron:dev\"",
+    "build": "npm run clean && npm run build:ts",
+    "build:ts": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "electron:dev": "electron dist/index.js",
+    "electron:build": "electron-builder",
+    "start": "npm run build && electron dist/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:security": "jest --testNamePattern=\"Security|security\" --verbose",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "type-check": "tsc --noEmit",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:audit-fix": "npm audit fix",
+    "security:check": "npm run security:audit && npm run security:licenses && npm run test:security",
+    "security:licenses": "license-checker --excludePrivatePackages --failOn 'GPL-2.0;GPL-3.0;AGPL-1.0;AGPL-3.0'",
+    "security:scan": "npm run security:check && npm run lint && npm run type-check",
+    "precommit": "npm run security:scan && npm run test",
+    "prepare": "husky install || true",
+    "integration-test": "jest tests/integration --verbose"
+  },
+  "keywords": [
+    "poker",
+    "analysis",
+    "electron",
+    "typescript",
+    "llm",
+    "ocr"
+  ],
+  "author": "CoinPoker Intelligence Assistant Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "concurrently": "^8.2.2",
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.4.0",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "license-checker": "^25.0.1",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@google-cloud/aiplatform": "^3.9.0",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.6.0",
+    "express": "^4.18.2",
+    "fastify": "^4.23.0",
+    "openai": "^4.4.0",
+    "prom-client": "^14.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tesseract.js": "^5.0.2",
+    "winston": "^3.11.0"
+  },
+  "build": {
+    "appId": "com.coinpoker.intelligence-assistant",
+    "productName": "CoinPoker Intelligence Assistant",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

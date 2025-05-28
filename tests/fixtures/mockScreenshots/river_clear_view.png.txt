@@ -1,0 +1,4 @@
+This is a placeholder for a mock screenshot.
+Game Phase: River
+View: Clear
+Scenario: Standard river situation, all community cards visible, all text and elements clearly visible.

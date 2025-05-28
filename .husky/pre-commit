@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔒 Running pre-commit security checks..."
+
+# Run security audit
+echo "📋 Running npm audit..."
+npm run security:audit || {
+    echo "❌ npm audit failed - vulnerabilities detected"
+    echo "Run 'npm run security:audit-fix' to attempt automatic fixes"
+    exit 1
+}
+
+# Check licenses
+echo "📜 Checking package licenses..."
+npm run security:licenses || {
+    echo "❌ License check failed - problematic licenses detected"
+    exit 1
+}
+
+# Run linting
+echo "🔍 Running ESLint..."
+npm run lint || {
+    echo "❌ Linting failed - run 'npm run lint:fix' to fix issues"
+    exit 1
+}
+
+# Run type checking
+echo "🔧 Running TypeScript type check..."
+npm run type-check || {
+    echo "❌ Type checking failed"
+    exit 1
+}
+
+# Run security-focused tests
+echo "🧪 Running security tests..."
+npm run test:security || {
+    echo "❌ Security tests failed"
+    exit 1
+}
+
+echo "✅ All pre-commit security checks passed!"

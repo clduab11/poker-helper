@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.50.1 # Use a recent stable version
+    container_name: prometheus_poker_helper
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics_targets:/etc/prometheus/metrics_targets # Mount the targets directory
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle' # Allows reloading config via HTTP POST to /-/reload
+    restart: unless-stopped
+
+  metrics_file_server: # Simple HTTP server to serve .prom files
+    image: node:18-alpine
+    container_name: metrics_file_server_poker_helper
+    working_dir: /usr/src/app
+    volumes:
+      - ./metrics:/usr/src/app/metrics # Mount the directory where .prom files are stored
+    ports:
+      # Expose ports for each job defined in prometheus.yml, assuming one server serves all
+      # This is a simplified setup. In a real scenario, each might be a different service/exporter.
+      - "9091:8080" # For npm_audit (served from /metrics/npm_audit.prom)
+      - "9092:8080" # For github_actions (served from /metrics/github_actions.prom)
+      - "9093:8080" # For jest_tests (served from /metrics/jest_tests.prom)
+      - "9094:8080" # For pre_commit_hooks (served from /metrics/pre_commit_hooks.prom)
+    command: >
+      sh -c "npm install -g http-server && 
+             http-server . -p 8080 --cors -c-1"
+    restart: unless-stopped
+
+  # grafana: # Placeholder for Grafana service
+  #   image: grafana/grafana:10.4.2
+  #   container_name: grafana_poker_helper
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #     # - ./grafana/provisioning/:/etc/grafana/provisioning/ # For dashboards and datasources
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   restart: unless-stopped
+
+  # alertmanager: # Placeholder for Alertmanager service
+  #   image: prom/alertmanager:v0.27.0
+  #   container_name: alertmanager_poker_helper
+  #   ports:
+  #     - "9093:9093"
+  #   volumes:
+  #     - ./alertmanager/:/etc/alertmanager/
+  #   command: 
+  #     - '--config.file=/etc/alertmanager/alertmanager.yml'
+  #     - '--storage.path=/alertmanager'
+  #   restart: unless-stopped
+
+volumes:
+  prometheus_data: {}
+  # grafana_data: {}

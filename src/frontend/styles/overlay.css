@@ -1,0 +1,170 @@
+/* Overlay UI: minimal, high-contrast, non-intrusive, responsive, smooth transitions */
+
+/* Overlay window container */
+.overlay-window {
+  background: var(--overlay-bg, rgba(30,30,30,0.85));
+  color: var(--overlay-fg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+  padding: 20px 28px;
+  min-width: 220px;
+  max-width: 400px;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+/* Action indicator and text */
+.overlay-action {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.overlay-action-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+  display: inline-block;
+  /* Color set inline via React */
+}
+
+.overlay-action-text {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Confidence bar */
+.overlay-confidence {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+.overlay-confidence-bar-bg {
+  background: #222;
+  border-radius: 6px;
+  width: 80px;
+  height: 10px;
+  margin-right: 8px;
+  overflow: hidden;
+}
+
+.overlay-confidence-bar {
+  height: 100%;
+  border-radius: 6px;
+  background: #43a047;
+  transition: width 0.2s;
+}
+
+.overlay-confidence-value {
+  font-size: 0.95em;
+  color: #fbc02d;
+  font-weight: 500;
+}
+
+/* Rationale section */
+.overlay-rationale-section {
+  margin-top: 8px;
+  pointer-events: auto;
+}
+
+.overlay-rationale-toggle {
+  background: none;
+  border: none;
+  color: #43a047;
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 500;
+  margin-top: 8px;
+  transition: color 0.2s;
+  pointer-events: auto;
+}
+
+.overlay-rationale-toggle:hover {
+  color: #388e3c;
+}
+
+.overlay-rationale {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s;
+  margin-top: 4px;
+  color: #e0e0e0;
+  font-size: 0.98em;
+  pointer-events: auto;
+}
+
+.overlay-rationale.open {
+  max-height: 200px;
+  transition: max-height 0.3s;
+}
+
+/* Overlay controls panel */
+.overlay-controls-panel {
+  background: rgba(40,40,40,0.85);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  padding: 18px 20px;
+  margin: 18px auto 0 auto;
+  max-width: 340px;
+  font-size: 1em;
+  pointer-events: auto;
+  user-select: text;
+}
+
+.overlay-controls-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overlay-controls-panel label {
+  font-size: 0.98em;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.overlay-controls-panel input[type="range"] {
+  width: 100%;
+}
+
+.overlay-controls-panel input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.overlay-controls-panel select {
+  background: #222;
+  color: #fff;
+  border-radius: 4px;
+  border: 1px solid #444;
+  padding: 2px 8px;
+  font-size: 1em;
+}
+
+/* Responsive font size */
+.overlay-window,
+.overlay-controls-panel {
+  font-size: inherit;
+}
+
+@media (max-width: 600px) {
+  .overlay-window,
+  .overlay-controls-panel {
+    max-width: 98vw;
+    padding: 10px 4vw;
+    font-size: 0.95em;
+  }
+}
+
+/* Action color indicators (for reference, set inline in React):
+   fold = #e53935 (red)
+   call = #fbc02d (yellow)
+   raise = #43a047 (green)
+   all-in = #8e24aa (purple)
+*/

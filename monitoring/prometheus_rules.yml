@@ -1,0 +1,76 @@
+groups:
+- name: SecurityAlerts
+  rules:
+  - alert: HighCriticalNpmVulnerabilities
+    expr: npm_vulnerabilities{severity="critical"} > 0
+    for: 5m # Alert if critical vulnerabilities persist for 5 minutes
+    labels:
+      severity: critical
+      product: poker-helper
+      component: dependencies
+    annotations:
+      summary: "High number of critical NPM vulnerabilities detected ({{ $labels.job }})"
+      description: "{{ $value }} critical vulnerabilities found in npm audit for job {{ $labels.job }}. Please investigate immediately."
+      runbook_url: "https://your-runbook-url/npm-vulnerabilities"
+
+  - alert: HighSeverityNpmVulnerabilities
+    expr: npm_vulnerabilities{severity="high"} > 5 # Example threshold
+    for: 10m
+    labels:
+      severity: high
+      product: poker-helper
+      component: dependencies
+    annotations:
+      summary: "High number of high-severity NPM vulnerabilities detected ({{ $labels.job }})"
+      description: "{{ $value }} high vulnerabilities found in npm audit for job {{ $labels.job }}. Please review."
+      runbook_url: "https://your-runbook-url/npm-vulnerabilities"
+
+  - alert: GitHubWorkflowFailure
+    expr: github_workflow_run_status == 0 # 0 indicates failure
+    for: 1m # Alert immediately on failure
+    labels:
+      severity: critical
+      product: poker-helper
+      component: ci_cd_pipeline
+    annotations:
+      summary: "GitHub Actions workflow {{ $labels.workflow_id }} run {{ $labels.run_id }} failed"
+      description: "Workflow {{ $labels.workflow_id }} (run #{{ $labels.run_id }}) concluded with status '{{ $labels.conclusion }}'. Check logs: {{ $labels.html_url }}"
+      runbook_url: "https://your-runbook-url/github-workflow-failure"
+
+  - alert: JestTestFailures
+    expr: jest_tests_failed_total > 0
+    for: 2m
+    labels:
+      severity: warning # Or critical, depending on test importance
+      product: poker-helper
+      component: testing
+    annotations:
+      summary: "Jest tests are failing ({{ $labels.job }})"
+      description: "{{ $value }} Jest tests failed in job {{ $labels.job }}. Please investigate test results."
+      runbook_url: "https://your-runbook-url/jest-test-failures"
+
+  - alert: PreCommitHookSlow
+    expr: pre_commit_hook_duration_seconds{hook="overall"} > 30 # Example: if overall pre-commit takes longer than 30s
+    for: 5m
+    labels:
+      severity: warning
+      product: poker-helper
+      component: dev_experience
+    annotations:
+      summary: "Pre-commit hooks are running slow ({{ $labels.job }})"
+      description: "Overall pre-commit hook duration is {{ $value }}s for job {{ $labels.job }}, exceeding threshold."
+      runbook_url: "https://your-runbook-url/pre-commit-performance"
+
+  # Performance impact monitoring for the security pipeline itself
+  - alert: SecurityPipelineSlow
+    # This metric would need to be specifically created, e.g., duration of the 'security-scan.yml' workflow
+    expr: github_workflow_run_duration_seconds{workflow_id="security-scan.yml"} > 600 # Example: 10 minutes
+    for: 5m
+    labels:
+      severity: warning
+      product: poker-helper
+      component: ci_cd_performance
+    annotations:
+      summary: "Security CI/CD pipeline is running slow"
+      description: "The security pipeline ({{ $labels.workflow_id }}) took {{ $value }}s to complete, exceeding the threshold."
+      runbook_url: "https://your-runbook-url/cicd-performance"
