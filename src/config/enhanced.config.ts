@@ -3,7 +3,8 @@ import { env } from './environment';
 
 export const enhancedConfig: EnhancedOrchestratorConfig = {
   maxPipelineLatencyMs: 200,
-  pollingIntervalMs: 1000,
+  environment: env.nodeEnv === 'test' ? 'development' : env.nodeEnv,
+  enablePerformanceMonitoring: true,
   moduleConfigs: {
     screenCapture: {
       targetWindowTitle: 'CoinPoker',
@@ -142,7 +143,7 @@ export const anthropicConfig: Partial<EnhancedOrchestratorConfig> = {
 export const googleConfig: Partial<EnhancedOrchestratorConfig> = {
   visionModel: {
     provider: 'google',
-    apiKey: process.env.GOOGLE_API_KEY || '',
+    apiKey: process.env['GOOGLE_API_KEY'] || '',
     model: 'gemini-pro-vision',
     maxTokens: 1000,
     temperature: 0.3,
@@ -188,8 +189,8 @@ export const googleConfig: Partial<EnhancedOrchestratorConfig> = {
 export const customEndpointConfig: Partial<EnhancedOrchestratorConfig> = {
   visionModel: {
     provider: 'custom',
-    apiKey: process.env.CUSTOM_API_KEY || '',
-    baseURL: process.env.CUSTOM_BASE_URL || 'http://localhost:8000/v1',
+    apiKey: process.env['CUSTOM_API_KEY'] || '',
+    baseURL: process.env['CUSTOM_BASE_URL'] || 'http://localhost:8000/v1',
     model: 'custom-vision-model',
     maxTokens: 1000,
     temperature: 0.3,

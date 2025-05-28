@@ -5,19 +5,19 @@
 
 interface EnvironmentConfig {
   // API Keys
-  OPENAI_API_KEY?: string;
-  ANTHROPIC_API_KEY?: string;
-  GOOGLE_API_KEY?: string;
+  OPENAI_API_KEY: string;
+  ANTHROPIC_API_KEY: string;
+  GOOGLE_API_KEY: string;
   
   // Environment
   NODE_ENV: 'development' | 'production' | 'test';
   
   // Logging
-  LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error';
+  LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
   
   // Application
-  PORT?: string;
-  HOST?: string;
+  PORT: string;
+  HOST: string;
 }
 
 class Environment {
@@ -30,13 +30,13 @@ class Environment {
 
   private parseEnvironmentVariables(): EnvironmentConfig {
     return {
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
-      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-      NODE_ENV: (process.env.NODE_ENV as any) || 'development',
-      LOG_LEVEL: process.env.LOG_LEVEL as any,
-      PORT: process.env.PORT,
-      HOST: process.env.HOST,
+      OPENAI_API_KEY: process.env['OPENAI_API_KEY'] || '',
+      ANTHROPIC_API_KEY: process.env['ANTHROPIC_API_KEY'] || '',
+      GOOGLE_API_KEY: process.env['GOOGLE_API_KEY'] || '',
+      NODE_ENV: (process.env['NODE_ENV'] as any) || 'development',
+      LOG_LEVEL: (process.env['LOG_LEVEL'] as any) || 'info',
+      PORT: process.env['PORT'] || '3000',
+      HOST: process.env['HOST'] || 'localhost',
     };
   }
 

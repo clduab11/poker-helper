@@ -24,7 +24,7 @@ export class SecurityManager {
   private eventLog: SecurityEvent[] = [];
   private lastFootprint: SystemFootprint | null = null;
 
-  constructor(config: SecurityManagerConfig, logger?: any) {
+  constructor(config: SecurityManagerConfig, _logger?: any) {
     // Create default profiles based on config
     const profiles: SecurityProfile[] = [
       {

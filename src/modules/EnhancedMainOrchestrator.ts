@@ -255,7 +255,7 @@ export class EnhancedMainOrchestrator {
                 );
                 
                 decision = {
-                  action: workflowResult.recommendation,
+                  action: workflowResult.recommendation as any,
                   confidence: workflowResult.confidence,
                   rationale: workflowResult.reasoning,
                   timestamp: Date.now(),
@@ -315,7 +315,7 @@ export class EnhancedMainOrchestrator {
       const result = await this.multiAgentWorkflow?.processPokerScreenshot(imageData, gameState);
 
       if (result) {
-        const decision: Decision = {
+        const decision: any = {
           action: result.recommendation,
           confidence: result.confidence,
           reasoning: result.reasoning,

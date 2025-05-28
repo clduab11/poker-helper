@@ -32,7 +32,7 @@ class PokerIntelligenceApp {
    */
   private initializeElectronApp(): void {
     // Enable live reload for Electron in development
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       require('electron-reload')(__dirname, {
         electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron'),
         hardResetMethod: 'exit'

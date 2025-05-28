@@ -72,7 +72,7 @@ app.on('ready', () => {
   createMainWindow();
   // Grant screen capture permissions for overlay window
   if (mainWindow) {
-    mainWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+    mainWindow.webContents.session.setPermissionRequestHandler((_webContents, permission, callback) => {
       // Allow screen and window capture for the overlay UI
       if (permission === 'media' || permission === 'display-capture') {
         callback(true);

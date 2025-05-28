@@ -15,8 +15,8 @@ export * from './Orchestration';
 // Export all types from Overlay module
 export * from './Overlay';
 
-// Export all types from Recommendation module
-export * from './Recommendation';
+// Export all types from Recommendation module (with alias to avoid conflict)
+export { Recommendation as RecommendationType } from './Recommendation';
 
 // Export all types from ScreenCapture module
 export * from './ScreenCapture';

@@ -213,6 +213,9 @@ screenshots/
 captures/
 screen-data/
 
+# Generated images and assets
+generated-images/
+
 # OCR training data and models
 *.traineddata
 models/

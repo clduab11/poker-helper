@@ -84,12 +84,12 @@ export class ScreenshotManager extends EventEmitter {
     
     if (this.captureInterval) {
       clearInterval(this.captureInterval);
-      this.captureInterval = undefined;
+      this.captureInterval = undefined as any;
     }
 
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
+      this.cleanupInterval = undefined as any;
     }
 
     this.logger.info('Stopped screenshot capture system');
@@ -117,7 +117,7 @@ export class ScreenshotManager extends EventEmitter {
         filepath,
         metadata: {
           resolution: capture.resolution,
-          windowTitle: capture.windowTitle,
+          ...(capture.windowTitle && { windowTitle: capture.windowTitle }),
         },
       };
 

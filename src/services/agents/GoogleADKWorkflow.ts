@@ -1,5 +1,5 @@
 import { Logger } from '../../utils/logger';
-import { VisionModelService, VisionAnalysisResponse } from '../vision/VisionModelService';
+import { VisionModelService } from '../vision/VisionModelService';
 import { EventEmitter } from 'events';
 import { GameState } from '../../shared/types/GameState';
 
@@ -98,7 +98,9 @@ export class GoogleADKWorkflow extends EventEmitter {
 
   private async runVisionAgent(screenshot: Buffer): Promise<AgentMessage> {
     const agent = this.getAgentByRole('vision');
-    if (!agent) throw new Error('Vision agent not configured');
+    if (!agent) {
+      throw new Error('Vision agent not configured');
+    }
 
     this.emit('agent:start', { agentId: agent.id, role: agent.role });
 
@@ -126,7 +128,7 @@ Format as structured JSON.`;
       role: agent.role,
       content: this.parseJSON(response.analysis),
       timestamp: Date.now(),
-      confidence: response.confidence,
+      confidence: response.confidence || 0.8,
     };
 
     this.messageHistory.push(message);
@@ -140,24 +142,11 @@ Format as structured JSON.`;
     gameState: GameState
   ): Promise<AgentMessage> {
     const agent = this.getAgentByRole('analysis');
-    if (!agent) throw new Error('Analysis agent not configured');
+    if (!agent) {
+      throw new Error('Analysis agent not configured');
+    }
 
     this.emit('agent:start', { agentId: agent.id, role: agent.role });
-
-    const prompt = `You are a poker analysis agent. Given the visual data and game state, provide:
-
-Visual Data: ${JSON.stringify(visionData.content)}
-Current Game State: ${JSON.stringify(gameState)}
-
-Analyze and provide:
-1. Validated game state (reconcile visual data with stored state)
-2. Player tendencies based on recent actions
-3. Pot odds and implied odds
-4. Position analysis
-5. Stack-to-pot ratio (SPR) for each player
-6. Identify any discrepancies between visual and stored data
-
-Format as structured analysis with confidence scores for each element.`;
 
     // For now, simulate with a structured response
     const analysisResult = {
@@ -192,23 +181,11 @@ Format as structured analysis with confidence scores for each element.`;
     gameState: GameState
   ): Promise<AgentMessage> {
     const agent = this.getAgentByRole('strategy');
-    if (!agent) throw new Error('Strategy agent not configured');
+    if (!agent) {
+      throw new Error('Strategy agent not configured');
+    }
 
     this.emit('agent:start', { agentId: agent.id, role: agent.role });
-
-    const strategyPrompt = `You are an expert poker strategy agent. Based on the analysis:
-
-${JSON.stringify(analysis.content)}
-
-Provide strategic recommendations:
-1. Primary action (fold/check/call/raise)
-2. Sizing recommendations if betting/raising
-3. Alternative lines to consider
-4. Risk assessment
-5. EV calculation for each option
-6. Bluffing frequency recommendations
-
-Consider GTO principles while adapting to opponent tendencies.`;
 
     // Simulate strategy calculation
     const strategy = {
@@ -241,7 +218,9 @@ Consider GTO principles while adapting to opponent tendencies.`;
     strategy: AgentMessage
   ): Promise<WorkflowResult> {
     const agent = this.getAgentByRole('coordinator');
-    if (!agent) throw new Error('Coordinator agent not configured');
+    if (!agent) {
+      throw new Error('Coordinator agent not configured');
+    }
 
     this.emit('agent:start', { agentId: agent.id, role: agent.role });
 
@@ -310,7 +289,9 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private calculatePotOdds(gameState: GameState): number {
-    if (!gameState.currentBet || gameState.currentBet === 0) return 0;
+    if (!gameState.currentBet || gameState.currentBet === 0) {
+      return 0;
+    }
     return gameState.currentBet / (gameState.pot + gameState.currentBet);
   }
 
@@ -332,11 +313,14 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private analyzePosition(gameState: GameState): string {
-    const positions = ['BTN', 'CO', 'MP', 'EP', 'BB', 'SB'];
     const playerPosition = gameState.playerPosition || 0;
     
-    if (playerPosition <= 2) return 'Late Position - Strong';
-    if (playerPosition <= 4) return 'Middle Position - Moderate';
+    if (playerPosition <= 2) {
+      return 'Late Position - Strong';
+    }
+    if (playerPosition <= 4) {
+      return 'Middle Position - Moderate';
+    }
     return 'Early Position - Tight';
   }
 
@@ -362,8 +346,12 @@ Consider GTO principles while adapting to opponent tendencies.`;
     
     if (gameState.playerHand?.length === 2) {
       // Have cards
-      if (potOdds > 0.3) return 'fold';
-      if (position.includes('Strong')) return 'raise';
+      if (potOdds > 0.3) {
+        return 'fold';
+      }
+      if (position.includes('Strong')) {
+        return 'raise';
+      }
       return 'call';
     }
     
@@ -374,8 +362,12 @@ Consider GTO principles while adapting to opponent tendencies.`;
     const pot = gameState.pot || 0;
     const spr = analysis.stackAnalysis?.spr || 0;
     
-    if (spr < 3) return Math.min(gameState.playerChips || 0, pot);
-    if (spr < 10) return pot * 0.75;
+    if (spr < 3) {
+      return Math.min(gameState.playerChips || 0, pot);
+    }
+    if (spr < 10) {
+      return pot * 0.75;
+    }
     return pot * 0.67;
   }
 
@@ -398,9 +390,15 @@ Consider GTO principles while adapting to opponent tendencies.`;
   private assessRisk(gameState: GameState): string {
     const stackRisk = (gameState.playerChips || 0) / (gameState.startingChips || 100);
     
-    if (stackRisk < 0.2) return 'critical';
-    if (stackRisk < 0.5) return 'high';
-    if (stackRisk < 0.8) return 'medium';
+    if (stackRisk < 0.2) {
+      return 'critical';
+    }
+    if (stackRisk < 0.5) {
+      return 'high';
+    }
+    if (stackRisk < 0.8) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -437,20 +435,11 @@ Consider GTO principles while adapting to opponent tendencies.`;
   }
 
   private synthesizeRecommendation(
-    vision: any,
+    _vision: any,
     analysis: any,
     strategy: any,
     synthesis: any
   ): any {
-    // Weight recommendations by confidence
-    const weights = {
-      vision: synthesis.visualConfidence,
-      analysis: synthesis.analysisConfidence,
-      strategy: synthesis.strategyConfidence,
-    };
-    
-    const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-    
     // Primary action from strategy agent
     const action = strategy.primaryAction || 'check';
     const sizing = strategy.sizing || 0;
@@ -470,7 +459,6 @@ Consider GTO principles while adapting to opponent tendencies.`;
       reasoning,
       alternatives: strategy.alternatives,
       metadata: {
-        weights,
         conflicts: synthesis.conflicts,
       },
     };

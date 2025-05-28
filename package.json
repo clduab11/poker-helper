@@ -64,6 +64,8 @@
   "dependencies": {
     "@google-cloud/aiplatform": "^3.9.0",
     "@google/generative-ai": "^0.24.1",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@types/ws": "^8.18.1",
     "axios": "^1.6.0",
     "express": "^4.18.2",
     "fastify": "^4.23.0",
@@ -72,7 +74,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tesseract.js": "^5.0.2",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "ws": "^8.18.2"
   },
   "build": {
     "appId": "com.coinpoker.intelligence-assistant",

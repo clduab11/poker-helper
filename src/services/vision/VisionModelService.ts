@@ -285,7 +285,7 @@ export class VisionModelService {
 
     return {
       analysis,
-      confidence,
+      confidence: confidence || 0.8,
       metadata,
     };
   }
